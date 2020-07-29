@@ -1,6 +1,16 @@
 {
-  "name": "aframe-cloud-shader",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+    "name": "aframe-cloud-shader",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "devDependencies": {
+        "parcel": "^1.12.4",
+        "parcel-plugin-static-files-copy": "^2.4.3"
+    },
+    "dependencies": {
+        "aframe": "^1.0.4"
+    },
+    "scripts": {
+        "start": "parcel ./src/index.html"
+    }
 }
