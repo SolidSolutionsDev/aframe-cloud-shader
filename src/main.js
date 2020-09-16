@@ -88,17 +88,17 @@ AFRAME.registerShader('flat-cloud', {
 
         vec3 cloudColor() {
             
-            vec2 appendResult30 = (vec2(vWorldPosition.x , vWorldPosition.z));
+            vec2 positionScaled = (vec2(vWorldPosition.x *.1, vWorldPosition.z*0.1));
             
             //Append - speed is the 10,10
-            float _time = time * 0.001;
-            vec2 panner25 = ( 1.0 * _time * vec2( 10.0,10.0 ) + appendResult30);
+            float _time = time * 0.0001;
+            vec2 panner = ( 1.0 * _time * vec2( 10.0,10.0 ) + positionScaled);
 
             // Panner + Scale (0.1) + Texture Sample (SimpleNoise)
-            float simpleNoise24 = SimpleNoise( panner25*0.1 );
+            float v4SimpleNoise = SimpleNoise( panner );
 
             // RGBA
-            vec4 v4Noise = vec4(simpleNoise24);
+            vec4 v4Noise = vec4(v4SimpleNoise);
 
             // v4Noise is source
 
