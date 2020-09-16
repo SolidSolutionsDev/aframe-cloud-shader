@@ -9,6 +9,7 @@ AFRAME.registerShader('flat-cloud', {
         opacity: { type: 'number', is: 'uniform', default: 1.0 },
         intensity: { type: 'number', is: 'uniform', default: 1.0 },
         saturation: { type: 'number', is: 'uniform', default: 0.0 },
+        time: { type: 'time', is: 'uniform' },
     },
 
     // Setting raw to true uses THREE.RawShaderMaterial instead of ShaderMaterial,
@@ -44,6 +45,7 @@ AFRAME.registerShader('flat-cloud', {
         uniform float opacity;
         uniform float intensity;
         uniform float saturation;
+        uniform float time;
 
         varying vec3 vColor;
         varying vec3 vWorldPosition;
@@ -85,7 +87,32 @@ AFRAME.registerShader('flat-cloud', {
         }
 
         vec3 cloudColor() {
-            return vec3(0.0);
+            
+            vec2 appendResult30 = (vec2(vWorldPosition.x , vWorldPosition.z));
+            
+            //Append - speed is the 10,10
+            float _time = time * 0.001;
+            vec2 panner25 = ( 1.0 * _time * vec2( 10.0,10.0 ) + appendResult30);
+
+            // Panner + Scale (0.1) + Texture Sample (SimpleNoise)
+            float simpleNoise24 = SimpleNoise( panner25*0.1 );
+
+            // RGBA
+            vec4 temp_cast_0 = vec4(simpleNoise24);
+
+            // temp_cast_0 is source
+
+            // Blend Operations
+            vec4 blendOpSrc36 = vec4(vColor,0.0);
+            vec4 blendOpDest36 = (vec4(vColor,0.0) * intensity );
+            vec4 lerpBlendMode36 = mix(blendOpDest36,( blendOpSrc36 * blendOpDest36 ),saturation);
+            vec4 blendOpSrc42 = temp_cast_0;
+            vec4 blendOpDest42 = ( clamp( lerpBlendMode36, 0.0, 1.0 ));
+            vec4 lerpBlendMode42 = mix(blendOpDest42,( blendOpSrc42 * blendOpDest42 ),1.0);
+            
+            
+            vec4 finalColor = ( clamp( lerpBlendMode42, 0.0, 1.0 ));
+            return finalColor.xyz;
         }
 
         // This is the shader program.
@@ -95,7 +122,8 @@ AFRAME.registerShader('flat-cloud', {
             // Note that this shader doesn't use texture coordinates.
             // Set the RGB portion to our color,
             // and the alpha portion to our opacity.
-            gl_FragColor = vec4(vColor.rgb, opacity);
+            vec3 cloudColor = cloudColor();
+            gl_FragColor = vec4(cloudColor, opacity);
         }
     `
 });
