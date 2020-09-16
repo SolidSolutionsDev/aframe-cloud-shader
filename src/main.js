@@ -32,7 +32,7 @@ AFRAME.registerShader('flat-cloud', {
         void main() {
             vColor = color;
             vec4 worldPosition = modelViewMatrix * vec4( position, 1.0 );
-            vWorldPosition = worldPosition.xyz;
+            vWorldPosition = position;
             gl_Position = projectionMatrix * worldPosition;
         }
         `,
@@ -86,20 +86,26 @@ AFRAME.registerShader('flat-cloud', {
             return t;
         }
 
+        float map(float value, float min1, float max1, float min2, float max2) {
+            return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+        }
+
         vec3 cloudColor() {
             
-            vec2 positionScaled = (vec2(vWorldPosition.x *.1, vWorldPosition.z*0.1));
+            float positionScale = 0.001;
+            vec2 positionScaled = (vec2(vWorldPosition.x *positionScale, vWorldPosition.z*positionScale));
             
             //Append - speed is the 10,10
-            float _time = time * 0.0001;
+            float _time = time * 0.0005;
             vec2 panner = ( 1.0 * _time * vec2( 10.0,10.0 ) + positionScaled);
 
             // Panner + Scale (0.1) + Texture Sample (SimpleNoise)
             float v4SimpleNoise = SimpleNoise( panner );
 
             // RGBA
-            vec4 v4Noise = vec4(v4SimpleNoise);
-
+            vec4 v4Noise = vec4(map(v4SimpleNoise,0.,1.,.8,1.));
+            //vec4 v4Noise = vec4(v4SimpleNoise);
+            
             // v4Noise is source
 
             // Blend Operations
