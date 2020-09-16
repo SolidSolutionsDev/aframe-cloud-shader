@@ -98,20 +98,20 @@ AFRAME.registerShader('flat-cloud', {
             float simpleNoise24 = SimpleNoise( panner25*0.1 );
 
             // RGBA
-            vec4 temp_cast_0 = vec4(simpleNoise24);
+            vec4 v4Noise = vec4(simpleNoise24);
 
-            // temp_cast_0 is source
+            // v4Noise is source
 
             // Blend Operations
-            vec4 blendOpSrc36 = vec4(vColor,0.0);
-            vec4 blendOpDest36 = (vec4(vColor,0.0) * intensity );
-            vec4 lerpBlendMode36 = mix(blendOpDest36,( blendOpSrc36 * blendOpDest36 ),saturation);
-            vec4 blendOpSrc42 = temp_cast_0;
-            vec4 blendOpDest42 = ( clamp( lerpBlendMode36, 0.0, 1.0 ));
-            vec4 lerpBlendMode42 = mix(blendOpDest42,( blendOpSrc42 * blendOpDest42 ),1.0);
+            vec4 vColorOriginal = vec4(vColor,0.0);
+            vec4 vColorIntensity = (vec4(vColor,0.0) * intensity );
+            vec4 vColorIntensityAndSaturation = mix(vColorIntensity,( vColorOriginal * vColorIntensity ),saturation);
+
+            vec4 vColorIntensityAndSaturationClamped = ( clamp( vColorIntensityAndSaturation, 0.0, 1.0 ));
+            vec4 vMixedColorWithNoise = mix(vColorIntensityAndSaturationClamped,( (v4Noise) * vColorIntensityAndSaturationClamped ),1.0);
             
             
-            vec4 finalColor = ( clamp( lerpBlendMode42, 0.0, 1.0 ));
+            vec4 finalColor = ( clamp( vMixedColorWithNoise, 0.0, 1.0 ));
             return finalColor.xyz;
         }
 
