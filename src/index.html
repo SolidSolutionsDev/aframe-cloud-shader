@@ -1,52 +1,35 @@
 <html>
-    <head>
-        <script src="../node_modules/aframe/dist/aframe.min.js"></script>
-        <script src="./main.js"></script>
-    </head>
-    <body>
-        <a-scene>
-            <a-assets>
-                <a-asset-item id="sky" src="sky.obj"></a-asset-item>
-                <a-asset-item id="grass" src="grass.obj"></a-asset-item>
-                <a-asset-item id="ground" src="ground.obj"></a-asset-item>
-                <a-asset-item id="leaves" src="leaves.obj"></a-asset-item>
-                <a-asset-item id="trunk" src="trunk.obj"></a-asset-item>
-            </a-assets>
 
-            <a-obj-model
-                src="#sky"
-                material="shader: flat; vertexColors: vertex;"
-                scale="0.01 0.01 0.01"
-            ></a-obj-model>
-            <a-obj-model
-                src="#grass"
-                material="shader: flat; vertexColors: vertex;"
-                scale="0.01 0.01 0.01"
-            ></a-obj-model>
-            <a-obj-model
-                src="#ground"
-                material="shader: flat; vertexColors: vertex;"
-                scale="0.01 0.01 0.01"
-            ></a-obj-model>
-            <a-obj-model
-                src="#trunk"
-                material="shader: flat; vertexColors: vertex;"
-                scale="0.01 0.01 0.01"
-            ></a-obj-model>
-            <a-obj-model
-                src="#leaves"
-                material="shader: flat; vertexColors: vertex; side:double;"
-                scale="0.01 0.01 0.01"
-            ></a-obj-model>
+<head>
+    <script src="../node_modules/aframe/dist/aframe.min.js"></script>
+    <script src="./main.js"></script>
+</head>
 
-            <a-plane
-                color="#86A4CC"
-                height="15"
-                width="15"
-                position="0 0.05 0"
-                material="shader: flat; opacity:0.5; transparent:true;"
-                rotation="-90 0 0"
-            ></a-plane>
-        </a-scene>
-    </body>
+<body>
+    <a-scene>
+        <a-assets>
+            <a-asset-item id="sky" src="sky.obj"></a-asset-item>
+            <a-asset-item id="grass" src="grass.obj"></a-asset-item>
+            <a-asset-item id="ground" src="ground.obj"></a-asset-item>
+            <a-asset-item id="leaves" src="leaves.obj"></a-asset-item>
+            <a-asset-item id="trunk" src="trunk.obj"></a-asset-item>
+        </a-assets>
+
+        <a-obj-model src="#sky" material="shader: flat-cloud; vertexColors: vertex;" scale="0.01 0.01 0.01">
+        </a-obj-model>
+        <a-obj-model src="#grass" material="shader: flat-cloud; vertexColors: vertex;" scale="0.01 0.01 0.01">
+        </a-obj-model>
+        <a-obj-model src="#ground" material="shader: flat-cloud; vertexColors: vertex;" scale="0.01 0.01 0.01">
+        </a-obj-model>
+        <a-obj-model src="#trunk" material="shader: flat-cloud; vertexColors: vertex;" scale="0.01 0.01 0.01">
+        </a-obj-model>
+        <a-obj-model src="#leaves" material="shader: flat-cloud; vertexColors: vertex; side:double;"
+            scale="0.01 0.01 0.01">
+        </a-obj-model>
+
+        <a-plane color="#86A4CC" height="15" width="15" position="0 0.05 0"
+            material="shader: flat; opacity:0.5; transparent:true;" rotation="-90 0 0"></a-plane>
+    </a-scene>
+</body>
+
 </html>
