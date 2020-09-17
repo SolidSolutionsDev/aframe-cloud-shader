@@ -1,16 +1,29 @@
 <html>
     <head>
-        <script src="../node_modules/aframe/dist/aframe.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.0.4/aframe.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
     </head>
 
     <body>
         <a-scene>
             <a-assets>
-                <a-asset-item id="sky" src="sky.obj"></a-asset-item>
-                <a-asset-item id="grass" src="grass.obj"></a-asset-item>
-                <a-asset-item id="ground" src="ground.obj"></a-asset-item>
-                <a-asset-item id="leaves" src="leaves.obj"></a-asset-item>
-                <a-asset-item id="trunk" src="trunk.obj"></a-asset-item>
+                <a-asset-item id="sky" src="./static/sky.obj"></a-asset-item>
+                <a-asset-item
+                    id="grass"
+                    src="./static/grass.obj"
+                ></a-asset-item>
+                <a-asset-item
+                    id="ground"
+                    src="./static/ground.obj"
+                ></a-asset-item>
+                <a-asset-item
+                    id="leaves"
+                    src="./static/leaves.obj"
+                ></a-asset-item>
+                <a-asset-item
+                    id="trunk"
+                    src="./static/trunk.obj"
+                ></a-asset-item>
             </a-assets>
 
             <a-obj-model
@@ -58,6 +71,7 @@
             ></a-plane>
         </a-scene>
 
-        <script src="./main.js"></script>
+        <script src="./flat-cloud.js"></script>
+        <script src="./gui.js"></script>
     </body>
 </html>

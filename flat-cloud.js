@@ -1,21 +1,12 @@
-import * as dat from "dat.gui";
-
-const uniforms = {
+var uniforms = {
     opacity: 1,
     colorIntensity: 1,
     shadowIntensity: 0.2,
     saturation: 0,
     speedX: 1,
     speedY: 1,
+    scale: 1,
 };
-
-const gui = new dat.GUI();
-gui.add(uniforms, "opacity");
-gui.add(uniforms, "colorIntensity");
-gui.add(uniforms, "shadowIntensity");
-gui.add(uniforms, "saturation");
-gui.add(uniforms, "speedX");
-gui.add(uniforms, "speedX");
 
 AFRAME.registerShader("flat-cloud", {
     schema: {
@@ -48,6 +39,11 @@ AFRAME.registerShader("flat-cloud", {
             is: "uniform",
             default: uniforms.speedY,
         },
+        scale: {
+            type: "number",
+            is: "uniform",
+            default: uniforms.scale,
+        },
 
         time: { type: "time", is: "uniform" },
     },
@@ -74,6 +70,7 @@ AFRAME.registerShader("flat-cloud", {
         uniform float speedX;
         uniform float speedY;
         uniform float time;
+        uniform float scale;
 
         varying vec3 vColor;
         varying vec3 vWorldPosition;
@@ -119,7 +116,7 @@ AFRAME.registerShader("flat-cloud", {
         }
 
         vec3 cloudColor() {
-            float positionScale = 0.001;
+            float positionScale = 0.001 * scale;
             vec2 positionScaled = (vec2(vWorldPosition.x *positionScale, vWorldPosition.z*positionScale));
             
             float _time = time * 0.0005;
@@ -164,5 +161,8 @@ AFRAME.registerComponent("uniform-updater", {
 
         this.el.components.material.material.uniforms.speedY.value =
             uniforms.speedY;
+
+        this.el.components.material.material.uniforms.scale.value =
+            uniforms.scale;
     },
 });
