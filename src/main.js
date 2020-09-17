@@ -1,32 +1,60 @@
+import * as dat from "dat.gui";
 
-AFRAME.registerShader('flat-cloud', {
-    // The schema declares any parameters for the shader.
+const uniforms = {
+    opacity: 1,
+    colorIntensity: 1,
+    shadowIntensity: 0.2,
+    saturation: 0,
+    speedX: 1,
+    speedY: 1,
+};
+
+const gui = new dat.GUI();
+gui.add(uniforms, "opacity");
+gui.add(uniforms, "colorIntensity");
+gui.add(uniforms, "shadowIntensity");
+gui.add(uniforms, "saturation");
+gui.add(uniforms, "speedX");
+gui.add(uniforms, "speedX");
+
+AFRAME.registerShader("flat-cloud", {
     schema: {
-        // Where relevant, it is customary to support color.
-        // The A-Frame schema uses `type:'color'`, so it will parse string values like 'white' or 'red.
-        // `is:'uniform'` tells A-Frame this should appear as uniform value in the shader(s).
-        // It is customary to support opacity, for fading in and out.
-        opacity: { type: 'number', is: 'uniform', default: 1.0 },
-        intensity: { type: 'number', is: 'uniform', default: 1.0 },
-        saturation: { type: 'number', is: 'uniform', default: 0.0 },
-        time: { type: 'time', is: 'uniform' },
+        opacity: { type: "number", is: "uniform", default: uniforms.opacity },
+
+        colorIntensity: {
+            type: "number",
+            is: "uniform",
+            default: uniforms.colorIntensity,
+        },
+        shadowIntensity: {
+            type: "number",
+            is: "uniform",
+            default: uniforms.shadowIntensity,
+        },
+
+        saturation: {
+            type: "number",
+            is: "uniform",
+            default: uniforms.saturation,
+        },
+
+        speedX: {
+            type: "number",
+            is: "uniform",
+            default: uniforms.speedX,
+        },
+        speedY: {
+            type: "number",
+            is: "uniform",
+            default: uniforms.speedY,
+        },
+
+        time: { type: "time", is: "uniform" },
     },
 
-    // Setting raw to true uses THREE.RawShaderMaterial instead of ShaderMaterial,
-    // so your shader strings are used as-is, for advanced shader usage.
-    // Here, we want the usual prefixes with GLSL constants etc.,
-    // so we set it to false.
-    // (Which is also the default, so we could have omitted it).
     raw: false,
 
-    // Here, we're going to use the default vertex shader by omitting vertexShader.
-    // But note that if your fragment shader cares about texture coordinates,
-    // the vertex shader should set varying values to use in the fragment shader. 
-
-    // Since almost every WebVR-capable browser supports ES6,
-    // define our fragment shader as a multi-line string.
-    vertexShader:
-        `
+    vertexShader: /* glsl */ `
         varying vec3 vColor;
         varying vec3 vWorldPosition;
         void main() {
@@ -36,15 +64,15 @@ AFRAME.registerShader('flat-cloud', {
             gl_Position = projectionMatrix * worldPosition;
         }
         `,
-    fragmentShader:
-        `
-        // Use medium precision.
+    fragmentShader: /* glsl */ `
         precision mediump float;
 
-        // This receives the opacity value from the schema, which becomes a number.
         uniform float opacity;
-        uniform float intensity;
+        uniform float colorIntensity;
+        uniform float shadowIntensity;
         uniform float saturation;
+        uniform float speedX;
+        uniform float speedY;
         uniform float time;
 
         varying vec3 vColor;
@@ -91,26 +119,18 @@ AFRAME.registerShader('flat-cloud', {
         }
 
         vec3 cloudColor() {
-            
             float positionScale = 0.001;
             vec2 positionScaled = (vec2(vWorldPosition.x *positionScale, vWorldPosition.z*positionScale));
             
-            //Append - speed is the 10,10
             float _time = time * 0.0005;
-            vec2 panner = ( 1.0 * _time * vec2( 10.0,10.0 ) + positionScaled);
+            vec2 panner = ( 1.0 * _time * vec2( 10.0 * speedX,10.0 * speedY ) + positionScaled);
 
-            // Panner + Scale (0.1) + Texture Sample (SimpleNoise)
             float v4SimpleNoise = SimpleNoise( panner );
 
-            // RGBA
-            vec4 v4Noise = vec4(map(v4SimpleNoise,0.,1.,.8,1.));
-            //vec4 v4Noise = vec4(v4SimpleNoise);
-            
-            // v4Noise is source
+            vec4 v4Noise = vec4(map(v4SimpleNoise,0.,1.,1. - shadowIntensity,1.));
 
-            // Blend Operations
             vec4 vColorOriginal = vec4(vColor,0.0);
-            vec4 vColorIntensity = (vec4(vColor,0.0) * intensity );
+            vec4 vColorIntensity = (vec4(vColor,0.0) * colorIntensity );
             vec4 vColorIntensityAndSaturation = mix(vColorIntensity,( vColorOriginal * vColorIntensity ),saturation);
 
             vec4 vColorIntensityAndSaturationClamped = ( clamp( vColorIntensityAndSaturation, 0.0, 1.0 ));
@@ -121,15 +141,28 @@ AFRAME.registerShader('flat-cloud', {
             return finalColor.xyz;
         }
 
-        // This is the shader program.
-        // A fragment shader can set the color via gl_FragColor,
-        // or decline to draw anything via discard.
         void main() {
-            // Note that this shader doesn't use texture coordinates.
-            // Set the RGB portion to our color,
-            // and the alpha portion to our opacity.
             vec3 cloudColor = cloudColor();
             gl_FragColor = vec4(cloudColor, opacity);
         }
-    `
+    `,
+});
+
+AFRAME.registerComponent("uniform-updater", {
+    tick: function () {
+        this.el.components.material.material.uniforms.colorIntensity.value =
+            uniforms.colorIntensity;
+
+        this.el.components.material.material.uniforms.shadowIntensity.value =
+            uniforms.shadowIntensity;
+
+        this.el.components.material.material.uniforms.saturation.value =
+            uniforms.saturation;
+
+        this.el.components.material.material.uniforms.speedX.value =
+            uniforms.speedX;
+
+        this.el.components.material.material.uniforms.speedY.value =
+            uniforms.speedY;
+    },
 });
